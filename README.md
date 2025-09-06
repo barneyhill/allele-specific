@@ -2,53 +2,95 @@
 
 ### **Objective**
 
-For a single target gene, identify the optimal minimal set of `K` ASOs that maximizes the **expected number of individuals covered** in a population, assuming a 50% probability that a targeted heterozygous variant is on the disease-associated haplotype.
+For a single target gene, identify the optimal set of `k` ASOs (Antisense Oligonucleotides) that maximizes the **expected number of individuals covered** in a phased haplotype population, where coverage is restricted to heterozygous variants to ensure allele-specific targeting.
 
-### **The Probabilistic Model**
+### **The Haplotype-Specific Model**
 
-An individual is considered successfully covered if at least one of the selected ASOs targets a variant that is both heterozygous in that individual and resides on the disease haplotype.
+An individual is considered covered if at least one of the selected ASOs targets a variant where:
+1. The individual is **heterozygous** for that variant (different alleles on the two haplotypes)
+2. The variant appears on at least one of their haplotypes
 
-*   The probability that a single suitable ASO fails (i.e., is on the healthy haplotype) is `0.5`.
-*   The probability that an individual `i` is **not covered** by a selected set of ASOs `S` is the probability that *all* suitable ASOs in that set fail simultaneously.
-*   The probability that an individual `i` **is covered** is `1 - P(not covered)`.
+Key principles:
+- Only heterozygous sites contribute to ASO coverage (homozygous sites cannot provide allele-specific targeting)
+- Each heterozygous individual has a 50% chance of coverage per haplotype
+- Total expected coverage = 0.5 × (individuals with variant on haplotype 1) + 0.5 × (individuals with variant on haplotype 2)
 
-If an individual `i` is heterozygous for `c` ASOs within the selected set `S`, their probability of being covered is:
-`P(Coveredᵢ) = 1 - (0.5)ᶜ`
+### **The Solution: Integer Linear Programming (ILP)**
 
-The total expected number of individuals covered for a set `S` is the sum of these probabilities across the entire population:
-`ExpectedCoverage(S) = Σ (1 - 0.5ᶜᵢ)`
+The implementation uses Google's OR-Tools CP-SAT solver to find the optimal ASO set through integer linear programming, which guarantees finding the optimal solution (unlike greedy approaches).
 
-### **The Solution: A Greedy Algorithm**
+#### 1. Input Data
 
-A greedy algorithm provides an elegant and computationally efficient solution by iteratively building the optimal set. At each step, it selects the single best ASO that adds the most to the total expected coverage.
+- **Phased Haplotype Data**: BCF files containing phased genotypes from HGDP+1KGP dataset
+- **Gene Coordinates**: Retrieved using PyEnsembl (default: SCN2A gene)
+- **Population Metadata**: Superpopulation assignments for stratified analysis
+- **Variant Information**: Indel positions, reference and alternative alleles
 
-#### 1. Given Inputs
+#### 2. Data Structures
 
-*   **Set of Individuals (`I`)**: A set representing all `n` individuals in the cohort.
-*   **Set of Candidate ASOs (`A`)**: A set of all `m` potential ASOs for the gene.
-*   **Heterozygosity Matrix (`H_ij`)**: A binary matrix derived from WGS data, indicating which individuals are heterozygous for the variants targeted by each ASO.
-    *   `H_ij = 1` if individual `i` is heterozygous for the variant targeted by ASO `j`.
-    *   `H_ij = 0` otherwise.
+- **Haplotype Matrices (`hap1_matrix`, `hap2_matrix`)**: Binary matrices where:
+  - Rows represent individuals
+  - Columns represent variant positions
+  - Values indicate presence (1) or absence (0) of the alternative allele
+- **Heterozygous Coverage Lists**: For each individual, tracks which variants are heterozygous and on which haplotype
 
-#### 2. The Algorithm
+#### 3. ILP Formulation
 
-1.  **Initialization**:
-    *   Start with an empty set of selected ASOs: `S = {}`.
-    *   Create a list of remaining candidate ASOs: `Candidates = A`.
-    *   Initialize the current total expected coverage: `TotalExpectedCoverage = 0`.
+**Decision Variables:**
+- `x_i`: Binary variable indicating whether ASO `i` is selected
+- `y1_j`, `y2_j`: Binary variables indicating whether individual `j` is covered through haplotype 1 or 2
 
-2.  **Iterative Selection**:
-    *   Repeat `K` times (for a final set of size `K`):
-        a.  Set `BestASO = null` and `MaxMarginalGain = -1`.
-        b.  **For each `aso_j` in `Candidates`**:
-            i.  Calculate the **marginal gain** in expected coverage that `aso_j` would provide if added to the current set `S`.
-            ii. The marginal gain is `ExpectedCoverage(S U {aso_j}) - TotalExpectedCoverage`.
-            iii. If this gain is greater than `MaxMarginalGain`, update `MaxMarginalGain` and set `BestASO = aso_j`.
-        c.  **Add `BestASO` to `S`**.
-        d.  **Remove `BestASO` from `Candidates`**.
-        e.  **Update `TotalExpectedCoverage`** to `TotalExpectedCoverage + MaxMarginalGain`.
-        f.  Store the results for this step (`K`, the new `S`, and the new `TotalExpectedCoverage`).
+**Constraints:**
+- `Σ x_i ≤ k`: Select at most k ASOs
+- Coverage constraints: An individual is covered on a haplotype if at least one selected ASO targets a heterozygous variant on that haplotype
 
-#### 3. Output
+**Objective:**
+- Maximize: `Σ (y1_j + y2_j)` (scaled expected coverage across both haplotypes)
 
-The algorithm produces a performance table showing the optimal set of ASOs and the corresponding expected population coverage for each set size from 1 to `K`.
+#### 4. Implementation Features
+
+**Core Analysis:**
+- Iterative solving for k=1 to 9 ASOs
+- Optimal selection using OR-Tools CP-SAT solver with multi-core support
+- Coverage calculation restricted to heterozygous sites only
+
+**Visualization & Reporting:**
+- **Heterozygous Proportion Tables**: k×k matrices showing:
+  - Diagonal: proportion of individuals heterozygous for each variant
+  - Off-diagonal: proportion heterozygous for both variants in a pair
+- **Coverage Plots**: 
+  - Overall population coverage vs. number of ASOs
+  - Stratified coverage by superpopulation
+- **Variant Tables**: Selected variants with per-population coverage statistics
+- **Cumulative Coverage Summaries**: Total and proportional coverage by population
+
+#### 5. Output
+
+For each value of k, the program produces:
+1. Optimal set of k ASO target positions
+2. Heterozygous proportion matrix for selected variants
+3. Per-variant coverage breakdown by superpopulation
+4. Cumulative coverage statistics (total individuals covered and proportions)
+5. Publication-quality plots showing coverage trends
+
+### **Usage**
+
+```bash
+python main.py
+```
+
+The script will:
+1. Extract variants from the phased BCF file for the target gene
+2. Load superpopulation metadata
+3. Solve the ILP optimization for k=1 to 9
+4. Display detailed tables and statistics for each k
+5. Generate coverage plots saved as PNG and PDF files
+
+### **Dependencies**
+
+- `cyvcf2`: VCF/BCF file parsing
+- `pyensembl`: Gene coordinate retrieval
+- `numpy`: Matrix operations
+- `pandas`: Data manipulation and display
+- `matplotlib`: Visualization
+- `ortools`: ILP solver (CP-SAT)
