@@ -38,7 +38,7 @@ abstract: [Antisense oligonucleotides (ASOs) offer a promising therapeutic appro
 
 Antisense oligonucleotides offer two broad approaches for GoF mutations in haploinsufficient genes:
 
-*Non-allele-selective ASOs* use a single design to treat all patients regardless of their specific mutation. Elsunersen, targeting the _SCN2A_ transcript non-selectively, achieved >60% seizure reduction in a GoF patient @Wagner2025. However, this approach risks reducing wild-type expression below the haploinsufficiency threshold, posing toxicity concerns.
+*Non-allele-selective ASOs* use a single design to treat all patients regardless of their specific mutation. Elsunersen, targeting the _SCN2A_ transcript non-selectively, achieved >60% seizure reduction in a GoF patient @wagner_antisense_2025. However, this approach risks reducing wild-type expression below the haploinsufficiency threshold, posing toxicity concerns.
 
 //Also cite PMID: 34850743 
 
@@ -48,7 +48,7 @@ Antisense oligonucleotides offer two broad approaches for GoF mutations in haplo
 
 == Targeting Common Variants in Cis
 
-A scalable allele-selective strategy targets common variants that are heterozygous in the patient and in cis with the pathogenic mutation. nLorem has recently demonstrated this approach for _SCN2A_, disclosing two gapmers targeting benign SNPs in cis with GoF mutations @KimMcManus2025 @Kingsmore2025. After screening over 500 candidate ASOs, they have administered (intrathecal) individualised treatments to two patients based on their compatible SNP genotypes.
+A scalable allele-selective strategy targets common variants that are heterozygous in the patient and in cis with the pathogenic mutation. nLorem has recently demonstrated this approach for _SCN2A_, disclosing two gapmers targeting benign SNPs in cis with GoF mutations @kim-mcmanus_individualized_2025 @kingsmore_diplotype-based_2025. After screening over 500 candidate ASOs, they have administered (intrathecal) individualised treatments to two patients based on their compatible SNP genotypes.
 
 #table(
   columns: 4,
@@ -79,7 +79,7 @@ A scalable allele-selective strategy targets common variants that are heterozygo
   *Key for ASO chemical modifications:* black = unmodified deoxyribose; #text(fill: rgb("#1E90FF"))[blue] = 2′-methoxyethyl (MOE). Unmarked backbone linkages = phosphorothioate (PS); linkages marked with o = normal phosphodiester (PO). All cytosine's have 5-methyl modifications (5-methylcytosine).
 ]
 
-A second paper presents the use of Illumina's synthetic long-read sequencing platform for resolving patient haplotypes, signalling nLorem's interest in expanding personalised ASOs to patients with matching in-cis target alleles @Cheng2025. An independent screen of infants with seizure-related disorders found 16% were compatible with the two existing ASOs.
+A second paper presents the use of Illumina's synthetic long-read sequencing platform for resolving patient haplotypes, signalling nLorem's interest in expanding personalised ASOs to patients with matching in-cis target alleles @cheng_constellation_2025. An independent screen of infants with seizure-related disorders found 16% were compatible with the two existing ASOs.
 
 // "signalling nLorem's interest" - I would avoid this, it is an assumption. Is there a refernece for the last statement?
 
@@ -87,7 +87,7 @@ A second paper presents the use of Illumina's synthetic long-read sequencing pla
 
 Here, we formalise this SNP optimisation problem: given candidate indels heterozygous across a population, select the $k$ targets that maximise expected coverage under uncertainty about which haplotype carries each patient's de novo mutation. We extend this framework to portfolios of redundant ASO candidates targeting variants in high linkage disequilibrium, mitigating the risk of individual candidates failing during preclinical development.
 
-Applying our framework to 4,094 globally diverse phased genomes, we show that five optimally selected indels in _SCN2A_ achieve approximately 80% expected population coverage, with relatively equitable performance across ancestral groups. The FDA is considering new guidance on basket and umbrella trials for rare disease therapies @Prasad2025, opening the possibility of parallel trials for multiple ASOs matched to patient genetics.
+Applying our framework to 4,094 globally diverse phased genomes, we show that five optimally selected indels in _SCN2A_ achieve approximately 80% expected population coverage, with relatively equitable performance across ancestral groups. The FDA is considering new guidance on basket and umbrella trials for rare disease therapies @prasad_fdas_nodate, opening the possibility of parallel trials for multiple ASOs matched to patient genetics.
 
 // see also MHRA: https://www.gov.uk/government/publications/rare-therapies-and-uk-regulatory-considerations
 
@@ -160,11 +160,11 @@ The quantity $y_i(S)$ represents our expectation of whether individual $i$ can b
 We seek the selection of $k$ anchor alleles that maximises total expected coverage across the population:
 $ S^* = arg max_(S subset.eq {1,...,V}, |S|=k) sum_(i=1)^M y_i (S) $
 
-Since both $V$ (candidate alleles) and $k$ (number of portfolios) are modest in practice, we solve this by enumerating all $binom(V, k)$ combinations and evaluating each. We can evaluate $500,000$ combinations/s on a MacBook and $1,500,000$ combinations/s on a GeForce RTX 5090 GPU using Numba @Lam2015.
+Since both $V$ (candidate alleles) and $k$ (number of portfolios) are modest in practice, we solve this by enumerating all $binom(V, k)$ combinations and evaluating each. We can evaluate $500,000$ combinations/s on a MacBook and $1,500,000$ combinations/s on a GeForce RTX 5090 GPU using Numba @lam_numba_2015.
 
 = Results (_SCN2A_)
 
-To model diverse populations we use 4,094 phased whole genomes from the Human Genome Diversity Project and the 1000 Genomes Project @Koenig2023. For transcript definitions we use Ensembl 110 @Dyer2024. For a given candidate allele $v$, we make the following filters:
+To model diverse populations we use 4,094 phased whole genomes from the Human Genome Diversity Project and the 1000 Genomes Project @koenig_harmonized_2024. For transcript definitions we use Ensembl 110 @dyer_ensembl_2025. For a given candidate allele $v$, we make the following filters:
 
 1. $0.05 < "freq"_v < 0.95$.
 2. There is no variant $u$ with $0.01 < "freq"_u < 0.99$ in the interval $["pos"_v - 20, "pos"_v + 20]$.
@@ -259,4 +259,4 @@ To assess the impact of developing multiple ASO candidates per target site, we r
 
 All code for the optimisation framework and analysis is available at https://github.com/barneyhill/allele-specific.
 
-#bibliography("bibliography.bib")
+#bibliography("zotero.bib")
