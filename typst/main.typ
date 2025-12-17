@@ -11,14 +11,16 @@
 #show: template.with(
 title: "Optimal selection of antisense oligonucleotides for haplotype-selective knockdown in diverse populations",
 authors: (
-(name: "Barney Hill", affiliation-id: "1"),
-(name: "Stephan J. Sanders", affiliation-id: "1,2,3,4"),
+(name: "Barney Hill", affiliation-id: "1,2"),
+(name: "Duncan S. Palmer", affiliation-id: "2"),
+(name: "Stephan J. Sanders", affiliation-id: "1,3,4,5"),
 ),
 affiliations: (
 (id: 1, name: "Department of Paediatrics, University of Oxford, OX3 7TY Oxford, United Kingdom"),
-(id: 2, name: "Institute of Developmental and Regenerative Medicine, IMS-Tetsuya Nakamura Building, Old Road Campus, OX3 7TY Oxford, United Kingdom"),
-(id: 3, name: "New York Genome Center, New York, NY 10013, USA"),
-(id: 4, name: "Department of Psychiatry and Behavioral Sciences, UCSF Weill Institute for Neurosciences, University of California San Francisco, San Francisco, CA 94178, USA"),
+(id: 2, name: "Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford, United Kingdom"),
+(id: 3, name: "Institute of Developmental and Regenerative Medicine, IMS-Tetsuya Nakamura Building, Old Road Campus, OX3 7TY Oxford, United Kingdom"),
+(id: 4, name: "New York Genome Center, New York, NY 10013, USA"),
+(id: 5, name: "Department of Psychiatry and Behavioral Sciences, UCSF Weill Institute for Neurosciences, University of California San Francisco, San Francisco, CA 94178, USA"),
 (id: "*", name: "Correspondence to barney.hill@merton.ox.ac.uk")
 ),
 date: date,
@@ -38,58 +40,64 @@ abstract: [Antisense oligonucleotides (ASOs) offer a promising therapeutic appro
 
 Antisense oligonucleotides offer two broad approaches for GoF mutations in haploinsufficient genes:
 
-*Non-allele-selective ASOs* use a single design to treat all patients regardless of their specific mutation. Elsunersen, targeting the _SCN2A_ transcript non-selectively, achieved >60% seizure reduction in a GoF patient @wagner_antisense_2025. However, this approach risks reducing wild-type expression below the haploinsufficiency threshold, posing toxicity concerns.
-
-//Also cite PMID: 34850743 
+*Non-allele-selective ASOs* use a single design to treat all patients regardless of their specific mutation. Previously there have been reported candidates with promising preclinical efficacy @li_antisense_2021 and recently Elsunersen, targeting the _SCN2A_ transcript non-selectively, achieved >60% seizure reduction in a GoF patient @wagner_antisense_2025. However, this approach risks reducing wild-type expression below the haploinsufficiency threshold, posing toxicity concerns.
 
 *Allele-selective ASOs* preserve wild-type expression by targeting only the mutation-bearing haplotype. The challenge lies in selecting appropriate targets: each patient's unique de novo mutation would conventionally require bespoke ASO design, limiting scalability.
-
-// this approach has worked in KIF1A: PMID: 39122967.
 
 == Targeting Common Variants in Cis
 
 A scalable allele-selective strategy targets common variants that are heterozygous in the patient and in cis with the pathogenic mutation. nLorem has recently demonstrated this approach for _SCN2A_, disclosing two gapmers targeting benign SNPs in cis with GoF mutations @kim-mcmanus_individualized_2025 @kingsmore_diplotype-based_2025. After screening over 500 candidate ASOs, they have administered (intrathecal) individualised treatments to two patients based on their compatible SNP genotypes.
 
-#table(
-  columns: 4,
-  align: (left, left, left, left),
-  stroke: 0.5pt,
-  inset: 8pt,
-  
-  table.header(
-    [*Patient*],
-    [*Target SNP*],
-    [*Allele\ freq*],
-    [*Sequence*],
-  ),
-  
-  [Patient 1],
-  [rs190030016],
-  [0.0002],
-  [#text(fill: rgb("#1E90FF"))[TGoCoCoAo]ACAATGTAC#text(fill: rgb("#1E90FF"))[AoGoGGT]],
-  
-  [Patient 2],
-  [rs72874313],
-  [0.1789],
-  [#text(fill: rgb("#1E90FF"))[GGoToCoAo]ATTGAAAGATAo#text(fill: rgb("#1E90FF"))[ToCCC]],
-)
+#figure(
+  kind: table,
+  caption: [
+    nLorem allele-selective ASOs for _SCN2A_.
+  ],
+)[
+  #table(
+    columns: 4,
+    align: (left, left, left, left),
+    stroke: 0.5pt,
+    inset: 8pt,
 
-#v(0.5em)
-#text(size: 9pt)[
-  *Key for ASO chemical modifications:* black = unmodified deoxyribose; #text(fill: rgb("#1E90FF"))[blue] = 2′-methoxyethyl (MOE). Unmarked backbone linkages = phosphorothioate (PS); linkages marked with o = normal phosphodiester (PO). All cytosine's have 5-methyl modifications (5-methylcytosine).
+    table.header(
+      [*Patient*],
+      [*Target SNP*],
+      [*Allele freq*],
+      [*Sequence*],
+    ),
+
+    [Patient 1],
+    [rs190030016],
+    [0.0002],
+    [#text(fill: rgb("#1E90FF"))[TGoCoCoAo]ACAATGTAC#text(fill: rgb("#1E90FF"))[AoGoGGT]],
+
+    [Patient 2],
+    [rs72874313],
+    [0.1789],
+    [#text(fill: rgb("#1E90FF"))[GGoToCoAo]ATTGAAAGATAo#text(fill: rgb("#1E90FF"))[ToCCC]],
+  )
 ]
 
-A second paper presents the use of Illumina's synthetic long-read sequencing platform for resolving patient haplotypes, signalling nLorem's interest in expanding personalised ASOs to patients with matching in-cis target alleles @cheng_constellation_2025. An independent screen of infants with seizure-related disorders found 16% were compatible with the two existing ASOs.
+#v(0.8em)
+#text(size: 9pt)[
+  *Key for ASO chemical modifications:*  
+  black = unmodified deoxyribose;  
+  #text(fill: rgb("#1E90FF"))[blue] = 2′-methoxyethyl (MOE).  
+  Unmarked backbone linkages = phosphorothioate (PS);  
+  linkages marked with o = normal phosphodiester (PO).  
+  All cytosines have 5-methyl modifications (5-methylcytosine).
+]
 
-// "signalling nLorem's interest" - I would avoid this, it is an assumption. Is there a refernece for the last statement?
+A second paper presents the use of Illumina's synthetic long-read sequencing platform for resolving patient haplotypes @cheng_constellation_2025. A screen of infants with seizure-related disorders found 16% were compatible with the two existing ASOs.
+
+Additionally nLorem have tested this approach in the case of KIF1A @ziegler_antisense_2024.
 
 == This Work
 
 Here, we formalise this SNP optimisation problem: given candidate indels heterozygous across a population, select the $k$ targets that maximise expected coverage under uncertainty about which haplotype carries each patient's de novo mutation. We extend this framework to portfolios of redundant ASO candidates targeting variants in high linkage disequilibrium, mitigating the risk of individual candidates failing during preclinical development.
 
-Applying our framework to 4,094 globally diverse phased genomes, we show that five optimally selected indels in _SCN2A_ achieve approximately 80% expected population coverage, with relatively equitable performance across ancestral groups. The FDA is considering new guidance on basket and umbrella trials for rare disease therapies @prasad_fdas_nodate, opening the possibility of parallel trials for multiple ASOs matched to patient genetics.
-
-// see also MHRA: https://www.gov.uk/government/publications/rare-therapies-and-uk-regulatory-considerations
+Applying our framework to 4,094 globally diverse phased genomes, we show that five optimally selected indels in _SCN2A_ achieve approximately 80% expected population coverage, with relatively equitable performance across ancestral groups. The FDA and MHRA is considering new guidance on basket and umbrella trials for rare disease therapies @prasad_fdas_nodate @noauthor_rare_nodate, opening the possibility of parallel trials for multiple ASOs matched to patient genetics.
 
 // underselling the work - it is not just assessing the combinatorics, but creating a method to prioritize the SNPs for the nth gene
 
@@ -112,18 +120,17 @@ $ tilde(H)_(i v h) = H_(i v h) (1 - H_(i v overline(h))) $
 where $overline(h)$ denotes the opposite haplotype. This quantity equals 1 only when individual $i$ carries allele $v$ on haplotype $h$ but not on haplotype $overline(h)$.
 
 
-
 == Modelling de novo mutations at the population level
 
 Our goal is to select ASO targets that will serve a broad patient population by target a common variant rather then the specific pathogenic variant. Since germline de novo mutations arise randomly on either parental haplotype with equal probability, we model the disease-bearing haplotype as $h in {1, 2}$ with probability $1/2$ each.
 
 == The single-ASO case
 
-Consider first the simplest scenario in which we develop one ASO targeting allele $v$ and ask whether it can treat individual $i$. If the mutation were known to reside on haplotype $h$, the patient would be treatable if, and only if, $tilde(H)_(i v h) = 1$—that is, allele $v$ is present on the disease haplotype and absent from the wild-type haplotype.
+Consider first the simplest scenario in which we develop one ASO targeting allele $v$ and ask whether it can treat individual $i$. If the mutation were known to reside on haplotype $h$, the patient would be treatable if, and only if, $tilde(H)_(i v h) = 1$ that is, allele $v$ is present on the disease haplotype and absent from the wild-type haplotype.
 
-Because we do not know which haplotype carries the mutation, the probability of coverage is simply the average across both possible mutation locations:
-$ y_i ({v}) = 1/2 tilde(H)_(i v 1) + 1/2 tilde(H)_(i v 2) $
+Let $S = {v}$ denote the selection of a single target allele. The probability that individual $i$ is covered is $Pr("individual" i "is covered"∣S)$. Since each haplotype is equally likely to carry the mutation we have:
 
+$ Pr("individual" i "is covered"∣S) = 1/2 tilde(H)_(i v 1) + 1/2 tilde(H)_(i v 2) $
 == Portfolios to mitigate preclinical failure
 
 ASO development has substantial attrition, with many candidates failing before reaching patients. To mitigate this risk, we develop $P >= 1$ candidate ASOs targeting alleles in high linkage disequilibrium, expecting that at least one will succeed.
@@ -139,26 +146,37 @@ If the mutation is on haplotype $h$, the probability that the surviving ASO happ
 
 Suppose we select $k$ anchor alleles $S = {v_1, ..., v_k}$, yielding $k$ development pipelines. A patient is covered if at least one portfolio yields a usable ASO.
 
-Conditioning on the mutation being on haplotype $h$, we derived above that a single portfolio $p$ covers the patient with probability $n_(i h p) / P$, so the probability of failure is $1 - n_(i h p) / P$. These failure probabilities multiply across portfolios because each pipeline independently selects its surviving ASO uniformly at random from among its $P$ candidates. Note that this independence holds even when portfolios share alleles as overlapping membership affects the counts $n_(i h p)$ but not the independence of the selection processes themselves. The probability of being covered by none of the $k$ portfolios is therefore
-$ P("covered by none" | h) = product_(p=1)^k (1 - n_(i h p) / P) $
+Conditioning on the mutation being on haplotype $h$, we derived above that a single portfolio $p$ covers individual $i$ with probability $n_(i h p) / P$, so the probability that portfolio $p$ fails to cover that individual is $1 - n_(i h p) / P$. These failure probabilities multiply across portfolios because each pipeline independently selects its surviving ASO uniformly at random from among its $P$ candidates. Crucially, this independence assumption concerns the drug development process, not genetics: for any individual, the genotype-derived counts $n_(i h p)$ are fixed and observed, while only the survival outcomes are modeled as independent random variables across pipelines. When portfolios share alleles, the model overestimates coverage by treating shared candidates as independent across pipelines; in practice this effect is small because optimal anchor selection tends to favour variants in distinct LD blocks.
 
-Taking the complement, the probability of being covered by at least one portfolio is
-$ P("covered" | h) = 1 - product_(p=1)^k (1 - n_(i h p) / P) $
+The probability that individual $i$ is covered by none of the $k$ portfolios, conditional on the selected set $S$ and the mutation being on haplotype $h$, is therefore
+$ Pr("individual" i "is not covered" | S, h)
+  = product_(p=1)^k (1 - n_(i h p) / P). $
+
+Taking the complement, the probability that individual $i$ is covered by at least one portfolio is
+$ Pr("individual" i "is covered" | S, h)
+  = 1 - product_(p=1)^k (1 - n_(i h p) / P). $
 
 == Expected coverage
 
 Having derived the probability of coverage conditional on the mutation residing on haplotype $h$, we now integrate over the uncertainty in mutation location. By the law of total probability,
-$ y_i (S) &= sum_(h in {1,2}) P("covered" | h) dot P(h) \
-         &= P("covered" | h = 1) dot 1/2 + P("covered" | h = 2) dot 1/2 \
-         &= 1/2 sum_(h in {1,2}) P("covered" | h) \
-         &= 1/2 sum_(h in {1,2}) [ 1 - product_(p=1)^k (1 - n_(i h p) / P) ] $
+$ Pr("individual" i "is covered" | S) &= sum_(h in {1,2}) Pr("individual" i "is covered" | S, h) dot Pr(h) \
+  &= Pr("individual" i "is covered" | S, h = 1) dot 1/2 + \ 
+  &quad Pr("individual" i "is covered" | S, h = 2) dot 1/2 \
+  &= 1/2 sum_(h in {1,2}) Pr("individual" i "is covered" | S, h) $
+  
+Substituting the expression above for $Pr("individual" i "is covered" | S, h)$ gives
+$ Pr("individual" i "is covered" | S)
+   = 1/2 sum_(h in {1,2})
+     [ 1 - product_(p=1)^k (1 - n_(i h p) / P) ]. $
 
-The quantity $y_i(S)$ represents our expectation of whether individual $i$ can be treated, given uncertainty about both which haplotype carries the mutation and which ASO will survive development.
+Thus $Pr("individual" i "is covered" | S)$ represents our expectation of whether individual $i$ can be treated, given uncertainty about both which haplotype carries the mutation and which ASO will survive development.
 
 == Optimisation problem
 
 We seek the selection of $k$ anchor alleles that maximises total expected coverage across the population:
-$ S^* = arg max_(S subset.eq {1,...,V}, |S|=k) sum_(i=1)^M y_i (S) $
+$ S^* = arg max_(S subset.eq {1,...,V}, |S| = k)
+        sum_(i=1)^M Pr("individual" i "is covered" | S). $
+
 
 Since both $V$ (candidate alleles) and $k$ (number of portfolios) are modest in practice, we solve this by enumerating all $binom(V, k)$ combinations and evaluating each. We can evaluate $500,000$ combinations/s on a MacBook and $1,500,000$ combinations/s on a GeForce RTX 5090 GPU using Numba @lam_numba_2015.
 
@@ -174,11 +192,11 @@ To model diverse populations we use 4,094 phased whole genomes from the Human Ge
 Applying the implemented filters sequentially reduces the _SCN2A_ locus from 9,046 alleles to 50 candidates.
 
 #let filter_counts = (
-  ("Stage", "Filter", "Alleles remaining"),
-  ("0", "All alleles within the _SCN2A_ locus window", "9,046"),
-  ("1", "Minor-allele frequency 0.05–0.95", "896"),
-  ("2", [No other common variant within $plus.minus 20$ bp], "746"),
-  ("3", [$|"len"_v - "len"_u| >= 2$ bp vs. most common allele], "50"),
+  ([Stage], [Filter], [Alleles remaining]),
+  ([0], [All alleles within the _SCN2A_ locus window], [9,046]),
+  ([1], [Minor-allele frequency 0.05–0.95], [896]),
+  ([2], [No other common variant within $plus.minus 20$ bp], [746]),
+  ([3], [$|"len"_v - "len"_u| >= 2$ bp vs. most common allele], [50]),
 )
 
 #table(
@@ -213,7 +231,7 @@ Coverage is relatively uniform across populations except for individuals with Oc
   caption: [Expected coverage stratified by ancestral superpopulation for portfolio size $P = 1$. AFR: African; AMR: American; EAS: East Asian; EUR: European; SAS: South Asian. Disparities reflect population-specific allele frequency distributions.]
 ) <fig-coverage-ancestry>
 
-To visualise the above results we can also display the selected alleles for K=5 and their coverage across a sample of individuals. Note how some selected alleles are reference (165340317_G_G) while others are alternative (165375368_A_AGT). Below we are displaying 
+To visualise the above results we can also display the selected alleles for $K=5, P=1$ and their coverage across a sample of individuals. Note how some selected alleles are reference (165340317_G_G) while others are alternative (165375368_A_AGT). Below we are displaying 
 
 #let data = csv("plots/aso_haplotypes_k=5.csv")
 #let header = data.first()
