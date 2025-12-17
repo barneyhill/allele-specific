@@ -128,57 +128,37 @@ Our goal is to select ASO targets that will serve a broad patient population by 
 
 Consider first the simplest scenario in which we develop one ASO targeting allele $v$ and ask whether it can treat individual $i$. If the mutation were known to reside on haplotype $h$, the patient would be treatable if, and only if, $tilde(H)_(i v h) = 1$ that is, allele $v$ is present on the disease haplotype and absent from the wild-type haplotype.
 
-Let $S = {v}$ denote the selection of a single target allele. The probability that individual $i$ is covered is $Pr("individual" i "is covered"∣S)$. Since each haplotype is equally likely to carry the mutation we have:
+Let $S = {v}$ denote the selection of a single target allele. The expected coverage for individual $i$, marginalising over the unknown mutation-bearing haplotype, is
 
-$ Pr("individual" i "is covered"∣S) = 1/2 tilde(H)_(i v 1) + 1/2 tilde(H)_(i v 2) $
-== Portfolios to mitigate preclinical failure
+$ E["cov"_i | S] = 1/2 tilde(H)_(i v 1) + 1/2 tilde(H)_(i v 2). $
 
-ASO development has substantial attrition, with many candidates failing before reaching patients. To mitigate this risk, we develop $P >= 1$ candidate ASOs targeting alleles in high linkage disequilibrium, expecting that at least one will succeed.
+This corresponds to the case $N = K = 1$ in the general formulation below.
 
-Formally, for each anchor allele $v$, we define a portfolio $cal(P)(v)$ containing $v$ and its $P-1$ nearest neighbours by LD ($R^2$). We model that exactly one ASO per portfolio survives development, chosen uniformly at random.
+== Modelling preclinical attrition
 
-Let $n_(i h p)$ count how many alleles in portfolio $p$ are heterozygous on haplotype $h$ for individual $i$:
-$ n_(i h p) = sum_(u in cal(P)(v_p)) tilde(H)_(i u h) $
+ASO development has substantial attrition, with many candidates failing toxicity, specificity, or efficacy thresholds before reaching patients. To mitigate this risk, a programme may advance $N$ candidates into preclinical development, anticipating that only $K <= N$ will survive to clinical use.
 
-If the mutation is on haplotype $h$, the probability that the surviving ASO happens to target a usable allele is $n_(i h p) / P$.
+Let $S$ denote a selection of $N$ candidate alleles. For individual $i$ on haplotype $h$, define
 
-== Multiple portfolios and independence
+$ n_(i h) = sum_(v in S) tilde(H)_(i v h) $
 
-Suppose we select $k$ anchor alleles $S = {v_1, ..., v_k}$, yielding $k$ development pipelines. A patient is covered if at least one portfolio yields a usable ASO.
+as the count of selected candidates for which individual $i$ is heterozygous on haplotype $h$. The expected coverage—averaging over all $binom(N, K)$ possible subsets of $K$ survivors—is
 
-Conditioning on the mutation being on haplotype $h$, we derived above that a single portfolio $p$ covers individual $i$ with probability $n_(i h p) / P$, so the probability that portfolio $p$ fails to cover that individual is $1 - n_(i h p) / P$. These failure probabilities multiply across portfolios because each pipeline independently selects its surviving ASO uniformly at random from among its $P$ candidates. Crucially, this independence assumption concerns the drug development process, not genetics: for any individual, the genotype-derived counts $n_(i h p)$ are fixed and observed, while only the survival outcomes are modeled as independent random variables across pipelines. When portfolios share alleles, the model overestimates coverage by treating shared candidates as independent across pipelines; in practice this effect is small because optimal anchor selection tends to favour variants in distinct LD blocks.
+$ E["cov"_(i h) | S] = 1 - binom(N - n_(i h), K) / binom(N, K). $
 
-The probability that individual $i$ is covered by none of the $k$ portfolios, conditional on the selected set $S$ and the mutation being on haplotype $h$, is therefore
-$ Pr("individual" i "is not covered" | S, h)
-  = product_(p=1)^k (1 - n_(i h p) / P). $
+Marginalising over the unknown mutation-bearing haplotype:
 
-Taking the complement, the probability that individual $i$ is covered by at least one portfolio is
-$ Pr("individual" i "is covered" | S, h)
-  = 1 - product_(p=1)^k (1 - n_(i h p) / P). $
+$ E["cov"_i | S] = 1/2 sum_(h in {1,2}) [ 1 - binom(N - n_(i h), K) / binom(N, K) ]. $
 
-== Expected coverage
+We seek the selection $S^*$ maximising expected population coverage:
 
-Having derived the probability of coverage conditional on the mutation residing on haplotype $h$, we now integrate over the uncertainty in mutation location. By the law of total probability,
-$ Pr("individual" i "is covered" | S) &= sum_(h in {1,2}) Pr("individual" i "is covered" | S, h) dot Pr(h) \
-  &= Pr("individual" i "is covered" | S, h = 1) dot 1/2 + \ 
-  &quad Pr("individual" i "is covered" | S, h = 2) dot 1/2 \
-  &= 1/2 sum_(h in {1,2}) Pr("individual" i "is covered" | S, h) $
-  
-Substituting the expression above for $Pr("individual" i "is covered" | S, h)$ gives
-$ Pr("individual" i "is covered" | S)
-   = 1/2 sum_(h in {1,2})
-     [ 1 - product_(p=1)^k (1 - n_(i h p) / P) ]. $
+$ S^* = arg max_(S subset.eq {1,...,V}, |S| = N) sum_(i=1)^M E["cov"_i | S]. $
 
-Thus $Pr("individual" i "is covered" | S)$ represents our expectation of whether individual $i$ can be treated, given uncertainty about both which haplotype carries the mutation and which ASO will survive development.
+Exhaustive enumeration over all $binom(V, N)$ combinations is intractable for realistic values of $V$ and $N$. However, the problem can be solved exactly using integer linear programming (ILP). A function $f$ is concave if each unit increase in its argument yields a smaller gain than the previous: $f(n+1) - f(n)$ is decreasing. Concave maximisation problems over linear constraints admit exact solutions via ILP. Our coverage function $f(n) = 1 - binom(N-n, K) / binom(N, K)$ is concave: the marginal coverage gain from the $(n+1)$-th helpful candidate is
 
-== Optimisation problem
+$ f(n+1) - f(n) = binom(N - n - 1, K - 1) / binom(N, K) $
 
-We seek the selection of $k$ anchor alleles that maximises total expected coverage across the population:
-$ S^* = arg max_(S subset.eq {1,...,V}, |S| = k)
-        sum_(i=1)^M Pr("individual" i "is covered" | S). $
-
-
-Since both $V$ (candidate alleles) and $k$ (number of portfolios) are modest in practice, we solve this by enumerating all $binom(V, k)$ combinations and evaluating each. We can evaluate $500,000$ combinations/s on a MacBook and $1,500,000$ combinations/s on a GeForce RTX 5090 GPU using Numba @lam_numba_2015.
+which decreases in $n$. The case $N = K$ (all selected candidates survive) corresponds to the single-variant selection problem and is handled identically.
 
 = Results (_SCN2A_)
 
@@ -278,3 +258,15 @@ To assess the impact of developing multiple ASO candidates per target site, we r
 All code for the optimisation framework and analysis is available at https://github.com/barneyhill/allele-specific.
 
 #bibliography("zotero.bib")
+
+= Supplementary Material
+
+== Portfolio model for correlated candidates
+
+An alternative approach to modelling preclinical attrition groups candidates into portfolios based on linkage disequilibrium. For each selected anchor allele $v$, we define a portfolio $cal(P)(v)$ containing $v$ and its $P - 1$ nearest neighbours by LD ($R^2$), with exactly one ASO per portfolio assumed to survive development.
+
+Let $n_(i h p) = sum_(u in cal(P)(v_p)) tilde(H)_(i u h)$ count heterozygous alleles in portfolio $p$ for individual $i$ on haplotype $h$. The expected coverage for a selection of $k$ anchor alleles $S = {v_1, ..., v_k}$ is
+
+$ E["cov"_i | S] = 1/2 sum_(h in {1,2}) [ 1 - product_(p=1)^k (1 - n_(i h p) / P) ]. $
+
+The product over portfolios introduces interactions between selection decisions that preclude exact ILP solution. We solve this formulation by exhaustive enumeration, which remains tractable when $k$ and the number of candidates are small.
